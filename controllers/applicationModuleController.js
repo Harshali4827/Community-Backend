@@ -44,12 +44,12 @@ export const addApplicationModule = async (req, res) => {
 export const updateApplicationModule = async (req, res) => {
     try {
         const { id } = req.params;
-        const {module_name, module_description, parent_module_id, status, ip_address, user_id} = req.body;
+        const {module_name, module_description, parent_module_id, status} = req.body;
 
         const [result] = await pool.query(
             `UPDATE application_modules 
-            SET module_name = ?, module_description = ?, parent_module_id = ?,status = ?,updated_at = NOW(), ip_address = ?, user_id = ? WHERE id = ? AND is_delete = 0`,
-            [module_name, module_description, parent_module_id, status, ip_address, user_id, id]
+            SET module_name = ?, module_description = ?, parent_module_id = ?,status = ?,updated_at = NOW() WHERE id = ? AND is_delete = 0`,
+            [module_name, module_description, parent_module_id, status, id]
         );
 
         if (result.affectedRows === 0) {

@@ -45,7 +45,7 @@ export const addBlocks = async (req, res) => {
 export const updateBlock = async (req, res) => {
     try {
         const { id } = req.params;
-        const { property_id, property_sector_id, block_name, total_units, unit_number_start_from, unit_number_end_to, ip_address, created_by, status} = req.body;
+        const { property_id, property_sector_id, block_name, total_units, unit_number_start_from, unit_number_end_to,status} = req.body;
 
         const [result] = await pool.query(
             `UPDATE property_blocks 
@@ -56,11 +56,9 @@ export const updateBlock = async (req, res) => {
                 unit_number_start_from = ?, 
                 unit_number_end_to = ?, 
                 updated_at = NOW(), 
-                ip_address = ?, 
-                created_by = ?, 
                 status = ?
                 WHERE id = ? AND is_delete = 0 `,
-            [property_id, property_sector_id, block_name, total_units, unit_number_start_from, unit_number_end_to, ip_address, created_by, status,id]
+            [property_id, property_sector_id, block_name, total_units, unit_number_start_from, unit_number_end_to,status,id]
         );
 
         if (result.affectedRows === 0) {

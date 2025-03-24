@@ -45,13 +45,13 @@ export const addPropertyAssets = async (req, res) => {
 export const updatePropertyAssets = async (req, res) => {
     try {
         const { id } = req.params;
-        const { property_id, asset_name, asset_description, status , ip_address, created_by} = req.body;
+        const { property_id, asset_name, asset_description, status} = req.body;
 
         const [result] = await pool.query(
             `UPDATE property_assets 
-            SET property_id = ?, asset_name = ?, asset_description = ?,status = ?, updated_at = NOW(),  ip_address = ?, created_by = ?
+            SET property_id = ?, asset_name = ?, asset_description = ?,status = ?, updated_at = NOW()
             WHERE id = ? and is_delete = 0`,
-            [property_id, asset_name, asset_description, status, ip_address,created_by,id]
+            [property_id, asset_name, asset_description, status,id]
         );
 
         if (result.affectedRows === 0) {
