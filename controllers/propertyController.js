@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 export const addProperty = async (req, res) => {
     try {
         const { property_name, address, country_id, city_id, state_id, google_location, latitude, longitude, gst_number, 
