@@ -15,11 +15,12 @@ import gateRoutes from './routes/gatesRoutes.js';
 import bankRoutes from './routes/bankRoutes.js';
 import officeRoutes from './routes/officesRoutes.js';
 import csvRoutes from './routes/csvRoutes.js';
+import usePropertyUnitRoutes from './routes/propertyUnitRoutes.js';
 dotenv.config();
 
 const app = express();
 app.use(cors({
-    origin: ["http://localhost:3000",'http://localhost:3001','http://localhost:3002','http://localhost:3003', "http://192.168.1.21:3001","http://192.168.1.21:3000"],
+    origin: ["https://dev-admin.communitybolt.com","https://dev.communitybolt.com","http://localhost:3000",'http://localhost:3001','http://localhost:3002','http://localhost:3003', "http://192.168.1.21:3001","http://192.168.1.21:3000"],
     methods: ['GET', 'POST', 'PUT', 'DELETE','OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -40,7 +41,7 @@ app.use('/api/units', unitRoutes);
 app.use('/api/bank-details', bankRoutes);
 app.use('/api/offices', officeRoutes);
 app.use('/api/import-excel', csvRoutes);
-
+app.use('/api/user-property-units', usePropertyUnitRoutes);
 app.listen(5000, () => {
     console.log('Server running on port 5000');
 });

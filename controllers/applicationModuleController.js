@@ -9,7 +9,6 @@ export const getAllApplicationModule = async (req, res) => {
     }
 };
 
-
 export const getApplicationModuleById = async (req, res) => {
     try {
         const { id } = req.params;
