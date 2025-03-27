@@ -230,7 +230,7 @@ export const importExcel = async (req, res) => {
                       [user_id, property_id, property_unit_id]
                   );
 
-                  const unit_combination = `${sector_name || ''}-${block_name || ''}-${unit_number || ''}`;
+                  const unit_combination = `${sector_name || ''}${block_name || ''}${unit_number || ''}`;
                   const floor_number = 0;
                   const unit_status_id = null;
 
