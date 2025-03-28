@@ -11,3 +11,20 @@ export const getUserPropertyUnits = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+
+export const getUserPropertyUnitByUserId = async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const [results] = await pool.query(
+            'SELECT * FROM user_property_units WHERE user_id = ?', 
+            [id]  
+        );
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'User property unit not found' });
+        }
+        res.json(results); 
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
