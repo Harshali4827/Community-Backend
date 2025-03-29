@@ -2,13 +2,24 @@ import pool from '../config/db.js';
 
 export const getAllBlocks = async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM property_blocks WHERE is_delete = 0');
+        const [results] = await pool.query(`
+            SELECT pb.id, 
+                   p.property_name, 
+                   ps.sector_name, 
+                   pb.block_name, 
+                   pb.total_units, 
+                   pb.unit_number_start_from, 
+                   pb.unit_number_end_to
+            FROM property_blocks pb
+            JOIN property_sectors ps ON pb.property_sector_id = ps.id
+            JOIN property p ON pb.property_id = p.id
+            WHERE pb.is_delete = 0
+        `);
         res.json(results);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
-
 export const getBlockById = async (req, res) => {
     try {
         const { id } = req.params;

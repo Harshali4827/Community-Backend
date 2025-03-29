@@ -2,9 +2,30 @@ import pool from '../config/db.js';
 
 export const getAllGates = async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM property_gates WHERE is_delete = 0');
+        const query = `
+            SELECT 
+                pg.id,
+                pg.gate_name,
+                pg.gate_description,
+                pg.is_main_gate,
+                pg.status,
+                pg.created_at,
+                pg.updated_at,
+                pg.ip_address,
+                pg.created_by,
+                p.property_name
+            FROM 
+                property_gates pg
+            JOIN 
+                property p ON pg.property_id = p.id
+            WHERE 
+                pg.is_delete = 0;
+        `;
+        console.log("Executing Query:", query);
+        const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {
+        console.error("Database Error:", err);
         res.status(500).json({ error: err.message });
     }
 };

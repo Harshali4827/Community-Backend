@@ -2,9 +2,47 @@ import pool from '../config/db.js';
 
 export const getAllBank = async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM property_bank WHERE is_delete = 0');
+        const query = `
+            SELECT 
+                pb.id,
+                pb.bank_name,
+                pb.bank_branch,
+                pb.bank_ifsc,
+                pb.bank_account_number,
+                pb.bank_account_type,
+                pb.bank_account_name,
+                pb.bank_account_holder,
+                pb.is_primary,
+                pb.is_payment_gateway,
+                pb.payment_gateway_name,
+                pb.merchant_name,
+                pb.payment_gateway_mode,
+                pb.live_key_id,
+                pb.live_secret_key,
+                pb.live_account_number,
+                pb.test_key_id,
+                pb.test_secret_key,
+                pb.test_account_number,
+                pb.currency,
+                pb.payment_gateway_status,
+                pb.status,
+                pb.created_at,
+                pb.updated_at,
+                pb.ip_address,
+                pb.created_by,
+                p.property_name
+            FROM 
+                property_bank pb
+            JOIN 
+                property p ON pb.property_id = p.id
+            WHERE 
+                pb.is_delete = 0;
+        `;
+        console.log("Executing Query:", query);
+        const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {
+        console.error("Database Error:", err);
         res.status(500).json({ error: err.message });
     }
 };

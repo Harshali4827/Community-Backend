@@ -2,9 +2,29 @@ import pool from '../config/db.js';
 
 export const getAllPropertyAssets = async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM property_assets WHERE is_delete = 0');
+        const query = `
+            SELECT 
+                pa.id,
+                pa.asset_name,
+                pa.asset_description,
+                pa.status,
+                pa.created_at,
+                pa.updated_at,
+                pa.ip_address,
+                pa.created_by,
+                p.property_name
+            FROM 
+                property_assets pa
+            JOIN 
+                property p ON pa.property_id = p.id
+            WHERE 
+                pa.is_delete = 0;
+        `;
+        console.log("Executing Query:", query);
+        const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {
+        console.error("Database Error:", err);
         res.status(500).json({ error: err.message });
     }
 };

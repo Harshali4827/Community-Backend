@@ -2,7 +2,12 @@ import pool from '../config/db.js';
 
 export const getAllSectors = async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM property_sectors WHERE is_delete = 0');
+        const [results] = await pool.query(`
+            SELECT ps.id, ps.sector_name, ps.sector_description, ps.status, p.property_name 
+            FROM property_sectors AS ps
+            JOIN property AS p ON ps.property_id = p.id
+            WHERE ps.is_delete = 0
+        `);
         res.json(results);
     } catch (err) {
         res.status(500).json({ error: err.message });

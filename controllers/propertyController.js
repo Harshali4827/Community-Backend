@@ -45,63 +45,6 @@ export const addProperty = async (req, res) => {
     }
 };
 
-export const updateProperty = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { 
-            property_name, address, country_id, city_id, state_id, google_location, latitude, longitude, gst_number, 
-            total_sectors, total_blocks, total_units, total_offices, total_amenities, total_gates, total_parkings, 
-            total_guest_parking, min_sub_members_allow, min_cars_allow, min_bikes_allow, min_house_helps_allow, 
-            chairman_name, chairman_contact_no, chairman_email, emergency_name, emergency_contact_no, emergency_email, 
-            additional_parking_charges, is_payment_gateway_visible, status 
-        } = req.body;
-
-        const logo = req.file ? req.file.filename : null;
-
-        let query = `UPDATE properties SET 
-            property_name = ?, address = ?, country_id = ?, city_id = ?, state_id = ?, google_location = ?, latitude = ?, 
-            longitude = ?, gst_number = ?, total_sectors = ?, total_blocks = ?, total_units = ?, total_offices = ?, 
-            total_amenities = ?, total_gates = ?, total_parkings = ?, total_guest_parking = ?, min_sub_members_allow = ?, 
-            min_cars_allow = ?, min_bikes_allow = ?, min_house_helps_allow = ?, chairman_name = ?, chairman_contact_no = ?, 
-            chairman_email = ?, emergency_name = ?, emergency_contact_no = ?, emergency_email = ?, 
-            additional_parking_charges = ?, is_payment_gateway_visible = ?, status = ?, updated_at = NOW()`;
-
-        let values = [
-            property_name, address, country_id, city_id, state_id, google_location, latitude, longitude, gst_number, 
-            total_sectors, total_blocks, total_units, total_offices, total_amenities, total_gates, total_parkings, 
-            total_guest_parking, min_sub_members_allow, min_cars_allow, min_bikes_allow, min_house_helps_allow, 
-            chairman_name, chairman_contact_no, chairman_email, emergency_name, emergency_contact_no, emergency_email, 
-            additional_parking_charges, is_payment_gateway_visible, status
-        ];
-
-        if (logo) {
-            query += `, logo = ?`;
-            values.push(logo);
-        }
-
-        query += ` WHERE id = ?`;
-        values.push(id);
-
-        await pool.query(query, values);
-        res.status(200).json({ message: 'Property updated successfully' });
-
-    } catch (error) {
-        console.error('Error updating property:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
-};
-
-export const getAllProperties = async (req, res) => {
-    try {
-        const [properties] = await pool.query('SELECT * FROM property WHERE is_delete = 0');
-        res.status(200).json(properties);
-    } catch (error) {
-        console.error('Error fetching properties:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
-};
-
-
 export const getPropertyById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -117,6 +60,59 @@ export const getPropertyById = async (req, res) => {
     }
 };
 
+export const updateProperty = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { 
+            property_name, address, country_id, city_id, state_id, google_location, latitude, longitude, gst_number, 
+            total_sectors, total_blocks, total_units, total_offices, total_amenities, total_gates, total_parkings, 
+            total_guest_parking, min_sub_members_allow, min_cars_allow, min_bikes_allow, min_house_helps_allow, 
+            chairman_name, chairman_contact_no, chairman_email, emergency_name, emergency_contact_no, emergency_email, 
+            additional_parking_charges, is_payment_gateway_visible, status
+        } = req.body;
+
+        const [result] = await pool.query(
+            `UPDATE property 
+             SET property_name = ?, address = ?, country_id = ?, city_id = ?, state_id = ?, 
+                 google_location = ?, latitude = ?, longitude = ?, gst_number = ?, 
+                 total_sectors = ?, total_blocks = ?, total_units = ?, total_offices = ?, 
+                 total_amenities = ?, total_gates = ?, total_parkings = ?, total_guest_parking = ?, min_sub_members_allow = ?, 
+                 min_cars_allow = ?, min_bikes_allow = ?, min_house_helps_allow = ?, chairman_name = ?,chairman_contact_no = ?,
+                 chairman_email = ?,
+                 emergency_name = ?,
+                 emergency_contact_no = ?,
+                 emergency_email = ?, 
+                 additional_parking_charges = ?,         is_payment_gateway_visible = ?,
+                 status = ?, 
+                 updated_at = NOW() WHERE id = ? and is_delete = 0`,
+            [
+                property_name, address, country_id, city_id, state_id, google_location, latitude, longitude, gst_number, 
+                total_sectors, total_blocks, total_units, total_offices, total_amenities, total_gates, total_parkings, 
+                total_guest_parking, min_sub_members_allow, min_cars_allow, min_bikes_allow, min_house_helps_allow, 
+                chairman_name, chairman_contact_no, chairman_email, emergency_name, emergency_contact_no, emergency_email, 
+                additional_parking_charges, is_payment_gateway_visible, status, id
+            ]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Property details not found or already deleted' });
+        }
+        res.json({ message: 'Property details updated successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+        console.error(err);
+    }
+};
+
+export const getAllProperties = async (req, res) => {
+    try {
+        const [properties] = await pool.query('SELECT * FROM property WHERE is_delete = 0');
+        res.status(200).json(properties);
+    } catch (error) {
+        console.error('Error fetching properties:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
 
 export const deleteProperty = async (req, res) => {
     try {

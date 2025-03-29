@@ -2,12 +2,40 @@ import pool from '../config/db.js';
 
 export const getAllPropertyAmenities = async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM property_amenities WHERE is_delete = 0');
+        const query = `
+            SELECT 
+                pa.id,
+                pa.amenity_details,
+                pa.status,
+                pa.created_at,
+                pa.updated_at,
+                pa.ip_address,
+                pa.created_by,
+                pa.is_delete,
+                
+                p.property_name,
+                ps.sector_name,
+                pb.block_name,
+                pu.unit_number,
+                am.amenity_name
+
+            FROM property_amenities pa
+            LEFT JOIN property p ON pa.property_id = p.id
+            LEFT JOIN property_sectors ps ON pa.property_sector_id = ps.id
+            LEFT JOIN property_blocks pb ON pa.property_block_id = pb.id
+            LEFT JOIN property_units pu ON pa.property_unit_id = pu.id
+            LEFT JOIN amenity_master am ON pa.amenity_id = am.id
+
+            WHERE pa.is_delete = 0;
+        `;
+
+        const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
+
 
 export const getPropertyAmenityById = async (req, res) => {
     try {

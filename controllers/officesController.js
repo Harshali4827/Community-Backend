@@ -2,7 +2,16 @@ import pool from '../config/db.js';
 
 export const getAllOffices = async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM property_offices WHERE is_delete = 0');
+        const [results] = await pool.query(`
+            SELECT po.id, po.office_name, po.office_description, po.office_contact, po.status, po.created_at, po.updated_at,
+                   p.property_name, ps.sector_name, pb.block_name, pu.unit_number
+            FROM property_offices AS po
+            JOIN property AS p ON po.property_id = p.id
+            JOIN property_sectors AS ps ON po.property_sector_id = ps.id
+            JOIN property_blocks AS pb ON po.property_block_id = pb.id
+            JOIN property_units AS pu ON po.property_unit_id = pu.id
+            WHERE po.is_delete = 0
+        `);
         res.json(results);
     } catch (err) {
         res.status(500).json({ error: err.message });

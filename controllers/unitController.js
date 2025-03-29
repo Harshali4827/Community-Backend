@@ -1,8 +1,26 @@
 import pool from '../config/db.js';
 
+// export const getAllUnits = async (req, res) => {
+//     try {
+//         const [results] = await pool.query('SELECT * FROM property_units WHERE is_delete = 0');
+//         res.json(results);
+//     } catch (err) {
+//         res.status(500).json({ error: err.message });
+//     }
+// };
+
 export const getAllUnits = async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM property_units WHERE is_delete = 0');
+        const query = `
+            SELECT pu.id, pu.unit_number, pu.floor_number, 
+                   p.property_name, ps.sector_name, pb.block_name
+            FROM property_units pu
+            JOIN property p ON pu.property_id = p.id
+            JOIN property_sectors ps ON pu.property_sector_id = ps.id
+            JOIN property_blocks pb ON pu.property_block_id = pb.id
+            WHERE pu.is_delete = 0;
+        `;
+        const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {
         res.status(500).json({ error: err.message });
