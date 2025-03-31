@@ -1,14 +1,5 @@
 import pool from '../config/db.js';
 
-// export const getAllUnits = async (req, res) => {
-//     try {
-//         const [results] = await pool.query('SELECT * FROM property_units WHERE is_delete = 0');
-//         res.json(results);
-//     } catch (err) {
-//         res.status(500).json({ error: err.message });
-//     }
-// };
-
 export const getAllUnits = async (req, res) => {
     try {
         const query = `

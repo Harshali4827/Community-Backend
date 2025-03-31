@@ -38,7 +38,6 @@ export const getAllBank = async (req, res) => {
             WHERE 
                 pb.is_delete = 0;
         `;
-        console.log("Executing Query:", query);
         const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {

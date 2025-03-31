@@ -19,6 +19,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+export const verifyToken = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(403).json({ valid: false, message: 'Access denied' });
+
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) return res.status(401).json({ valid: false, message: 'Invalid token' });
+        req.user = decoded;
+        next();
+    });
+};
+
+export const getUserData = (req, res) => {
+    res.json({ valid: true, user: req.user });
+};
+
 export const getAllUsers = async (req, res) => {
     try {
         const [results] = await pool.query('SELECT * FROM users WHERE is_delete = 0');

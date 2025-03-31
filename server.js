@@ -17,6 +17,7 @@ import officeRoutes from './routes/officesRoutes.js';
 import csvRoutes from './routes/csvRoutes.js';
 import usePropertyUnitRoutes from './routes/propertyUnitRoutes.js';
 import userPropertyRoutes from './routes/userPropertyRoutes.js';
+import userRoleRoutes from './routes/userRoleRoutes.js';
 dotenv.config();
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api/offices', officeRoutes);
 app.use('/api/import-excel', csvRoutes);
 app.use('/api/user-property-units', usePropertyUnitRoutes);
 app.use('/api/users-property', userPropertyRoutes);
+app.use('/api/users-role',userRoleRoutes);
 app.listen(5000, () => {
     console.log('Server running on port 5000');
 });

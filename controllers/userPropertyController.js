@@ -18,7 +18,6 @@ export const getAllUserProperty = async (req, res) => {
             JOIN 
                 user_role AS ur ON up.user_role_id = ur.id;
         `;
-        console.log("Executing Query:", query);
         const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {

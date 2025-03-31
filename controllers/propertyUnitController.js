@@ -18,7 +18,6 @@ export const getUserPropertyUnits = async (req, res) => {
             JOIN property_blocks pb ON upu.property_block_id = pb.id
             JOIN user_role ur ON upu.user_role_id = ur.id;
         `;
-        console.log("Executing Query:", query);
         const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {
@@ -46,7 +45,6 @@ export const getUserPropertyUnitByUserId = async (req, res) => {
             JOIN user_role ur ON upu.user_role_id = ur.id
             WHERE upu.user_id = ?;
         `;
-        console.log("Executing Query:", query);
         const [results] = await pool.query(query, [id]);
         if (results.length === 0) {
             return res.status(404).json({ message: 'User property unit not found' });
@@ -55,6 +53,31 @@ export const getUserPropertyUnitByUserId = async (req, res) => {
     } catch (err) {
         console.error("Database Error:", err);
         res.status(500).json({ error: err.message });
+    }
+};
+
+export const addUserPropertyUnit = async (req, res) => {
+    try {
+        const { user_id, property_id, property_sector_id, property_block_id, property_unit_id, floor_number, unit_number, unit_status_id, unit_combination, membership_no, user_role_id, share_holding_no, share_certificate_nos, share_certificate_bank_name, kids_count, senior_citizen_count, male_count, female_count, total_people_count, alloted_four_wheel_parking_count, alloted_two_wheel_parking_count, nominee_names_and_per, club_due_date, four_sos_number } = req.body;
+        await pool.query('START TRANSACTION');
+        const [unitResult] = await pool.query(
+            `INSERT INTO user_property_units 
+            (user_id, property_id, property_sector_id, property_block_id, property_unit_id, floor_number, unit_number, unit_status_id, unit_combination, membership_no, user_role_id, share_holding_no, share_certificate_nos, share_certificate_bank_name, kids_count, senior_citizen_count, male_count, female_count, total_people_count, alloted_four_wheel_parking_count, alloted_two_wheel_parking_count, nominee_names_and_per, club_due_date, four_sos_number) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [user_id, property_id, property_sector_id, property_block_id, property_unit_id, floor_number, unit_number, unit_status_id, unit_combination, membership_no, user_role_id, share_holding_no, share_certificate_nos, share_certificate_bank_name, kids_count, senior_citizen_count, male_count, female_count, total_people_count, alloted_four_wheel_parking_count, alloted_two_wheel_parking_count, nominee_names_and_per, club_due_date, four_sos_number]
+        );
+        const [propertyResult] = await pool.query(
+            `INSERT INTO user_property (user_id, property_id, membership_no, user_role_id) 
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE membership_no = ?, user_role_id = ?`,
+            [user_id, property_id, membership_no, user_role_id, membership_no, user_role_id]
+        );
+        await pool.query('COMMIT');
+
+        res.status(201).json({ message: 'User property unit added successfully', unitId: unitResult.insertId, propertyId: propertyResult.insertId });
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        res.status(500).json({ error: error.message });
     }
 };
 

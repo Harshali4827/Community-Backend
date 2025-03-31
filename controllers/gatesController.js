@@ -21,7 +21,6 @@ export const getAllGates = async (req, res) => {
             WHERE 
                 pg.is_delete = 0;
         `;
-        console.log("Executing Query:", query);
         const [results] = await pool.query(query);
         res.json(results);
     } catch (err) {
