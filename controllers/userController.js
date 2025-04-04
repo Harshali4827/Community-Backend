@@ -118,7 +118,7 @@ export const verifyOtp = async (req, res) => {
             return res.status(404).send('User Not Found');
         }
 
-        if (rows[0].otp !== otp) {
+        if (rows[0].otp !== otp.toString()) {
             return res.status(400).send('Invalid OTP');
         }
 
