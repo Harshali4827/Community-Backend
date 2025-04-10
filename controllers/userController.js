@@ -140,6 +140,42 @@ export const verifyOtp = async (req, res) => {
     }
 };
 
+export const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [results] = await pool.query(
+            'SELECT * FROM users WHERE id = ? AND is_delete = 0',
+            [id]
+        );
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(results[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+export const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, full_name, mobile_number, email, pan_number,aadhar_number,blood_group} = req.body;
+
+        const [result] = await pool.query(
+            `UPDATE users 
+            SET title = ?, full_name = ?, mobile_number = ?, email = ?, pan_number = ?,aadhar_number = ?,blood_group = ?,updated_at = NOW()
+            WHERE id = ? AND is_delete = 0 `,
+            [title, full_name, mobile_number, email, pan_number,aadhar_number,blood_group, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'User not found or already deleted' });
+        }
+        res.json({ message: 'User updated successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
 export const deleteUser = async (req, res) => {
     try {

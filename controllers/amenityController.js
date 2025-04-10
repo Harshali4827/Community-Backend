@@ -6,6 +6,7 @@ export const getAllPropertyAmenities = async (req, res) => {
             SELECT 
                 pa.id,
                 pa.amenity_details,
+                pa.property_id,
                 pa.status,
                 pa.created_at,
                 pa.updated_at,

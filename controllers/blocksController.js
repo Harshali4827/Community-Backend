@@ -9,7 +9,8 @@ export const getAllBlocks = async (req, res) => {
                    pb.block_name, 
                    pb.total_units, 
                    pb.unit_number_start_from, 
-                   pb.unit_number_end_to
+                   pb.unit_number_end_to,
+                   pb.status
             FROM property_blocks pb
             JOIN property_sectors ps ON pb.property_sector_id = ps.id
             JOIN property p ON pb.property_id = p.id
