@@ -19,6 +19,11 @@ import usePropertyUnitRoutes from './routes/propertyUnitRoutes.js';
 import userPropertyRoutes from './routes/userPropertyRoutes.js';
 import userRoleRoutes from './routes/userRoleRoutes.js';
 import addAllRoutes from './routes/addAllRoutes.js';
+import getAllRoutes from './routes/getAllRoutes.js';
+import childGroupRoutes from './routes/ledgerChildGroupRoutes.js';
+import ledgerGroupRoutes from './routes/ledgerGroupRoutes.js';
+import ledgerRoutes from './routes/ledgerRoutes.js';
+import ledgerSubGroupRoutes from './routes/ledgerSubGroupRoutes.js';
 dotenv.config();
 
 const app = express();
@@ -48,6 +53,11 @@ app.use('/api/user-property-units', usePropertyUnitRoutes);
 app.use('/api/users-property', userPropertyRoutes);
 app.use('/api/users-role',userRoleRoutes);
 app.use('/api/add-all', addAllRoutes);
+app.use('/api', getAllRoutes);
+app.use('/api/ledger-childgroup', childGroupRoutes);
+app.use('/api/ledger-group', ledgerGroupRoutes);
+app.use('/api/ledger', ledgerRoutes);
+app.use('/api/ledger-subgroup', ledgerSubGroupRoutes);
 app.listen(5000, () => {
     console.log('Server running on port 5000');
 });

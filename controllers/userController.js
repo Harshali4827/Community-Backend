@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import pool from '../config/db.js';
 import multer from 'multer';
-
+import axios from 'axios';
 dotenv.config()
 
 const SECRET_KEY = process.env.JWT_SECRET; 
@@ -49,11 +49,18 @@ export const registerUser = async (req, res) => {
         full_name,
         mobile_number,
         email,
+        gender,
+        dob,
         pan_number,
         aadhar_number,
         ip_address,
         user_category,
-        blood_group
+        blood_group,
+        app_access,
+        country,
+        created_at_local,
+        updated_at_local,
+        user_role_id
     } = req.body;
     const  profile_photo = req.file ? req.file.filename : null; 
 
@@ -69,9 +76,9 @@ export const registerUser = async (req, res) => {
 
         const [result] = await pool.execute(
             `INSERT INTO users 
-            (title, full_name, mobile_number, email, pan_number, aadhar_number, otp_verified, created_at, updated_at, ip_address, is_delete, profile_photo, user_category, blood_group) 
-            VALUES (?, ?, ?, ?, ?, ?, 'no', NOW(), NOW(), ?, 0, ?, ?, ?)`,
-            [title, full_name, mobile_number, email, pan_number, aadhar_number, ip_address, profile_photo, user_category, blood_group]
+            (title, full_name, mobile_number, email, gender, dob, pan_number, aadhar_number, otp_verified, ip_address, profile_photo, user_category, blood_group, app_access, is_delete, country, timezone, created_at_local, updated_at_local, created_at, updated_at, user_role_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'no', ?, ?, ?, ?, ?, 0, ?,'Asia/Kolkata', ?, ?, NOW(), NOW(), ?)`,
+            [title, full_name, mobile_number, email, gender, dob, pan_number, aadhar_number, ip_address, profile_photo, user_category, blood_group, app_access, country,created_at_local,updated_at_local, user_role_id]
         );
 
         res.status(201).json({ message: "User Registered Successfully"});
@@ -83,9 +90,21 @@ export const registerUser = async (req, res) => {
 
 
 export const checkEmail = async (req, res) => {
-    const { email } = req.body;
+    const { email, captchaToken } = req.body;
+    if(!captchaToken){
+         return res.status(400).json({ message:'Captcha verification failed'})
+    }
+
+    //Verify the token with google
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY
+    const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captchaToken}`
 
     try {
+
+        const captchaResponse = await axios.post(verifyUrl)
+        if(!captchaResponse.data.success){
+            return res.status(400).json({ message: 'Captch verification failed'})
+        }
         const [rows] = await pool.execute('SELECT mobile_number FROM users WHERE email = ?', [email]);
 
         if (rows.length === 0) {
